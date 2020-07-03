@@ -15,19 +15,11 @@ Waveform::~Waveform()
 {
 }
 
-//void Waveform::update()
-//{
-//    if (dynamic_cast<Audio*>(sender()) != nullptr){
-//        
-//   }
-//    QWidget::update();
-//}
-
 void Waveform::paintEvent(QPaintEvent* event)
 {
     qDebug() << "paint";
 
-    if (m_audio.isFinished()) {
+    if (m_audio.isFinished() && m_audio.channelCount() != 0) {
         int totalFrames = m_audio.samples().size();
 
         QPainter painter(this);
@@ -35,6 +27,9 @@ void Waveform::paintEvent(QPaintEvent* event)
 
         int minX = event->region().boundingRect().x();
         int maxX = event->region().boundingRect().x() + event->region().boundingRect().width();
+
+        double scaleFactor = 1.0 / m_audio.maxPeak();
+        scaleFactor *= 0.7;
 
         if (m_audio.channelCount() == 2) {
             int startIndex = 2 * minX;
@@ -48,11 +43,11 @@ void Waveform::paintEvent(QPaintEvent* event)
                 int c1Mid = midPt - height() / 4;
                 int c2Mid = midPt + height() / 4;
 
-                painter.drawLine(counter, c1Mid, counter, c1Mid + (height() / 4) * m_audio.samples()[i]); // ver scale factor
-                painter.drawLine(counter, c1Mid, counter, c1Mid - (height() / 4) * m_audio.samples()[i]); // ver scale factor
+                painter.drawLine(counter, c1Mid, counter, c1Mid + (height() / 4) * m_audio.samples()[i] * scaleFactor);
+                painter.drawLine(counter, c1Mid, counter, c1Mid - (height() / 4) * m_audio.samples()[i] * scaleFactor);
 
-                painter.drawLine(counter, c2Mid, counter, c2Mid + (height() / 4) * m_audio.samples()[i + 1]);
-                painter.drawLine(counter, c2Mid, counter, c2Mid - (height() / 4) * m_audio.samples()[i + 1]);
+                painter.drawLine(counter, c2Mid, counter, c2Mid + (height() / 4) * m_audio.samples()[i + 1] * scaleFactor);
+                painter.drawLine(counter, c2Mid, counter, c2Mid - (height() / 4) * m_audio.samples()[i + 1] * scaleFactor);
 
                 counter++;
             }

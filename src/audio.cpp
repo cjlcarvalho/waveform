@@ -6,6 +6,7 @@
 
 Audio::Audio(const QString& file) :
     m_file(file),
+    m_maxPeak(0),
     m_isFinished(false)
 {
     m_decoder.setSourceFilename(m_file);
@@ -28,19 +29,23 @@ void Audio::bufferReady()
     const qint16* data = buffer.constData<qint16>();
     int count = buffer.sampleCount() / 2;
 
-    for (int i = 0; i < count; i++)
-        m_samples << data[i] / peak;
+    double currVal;
+    for (int i = 0; i < count; i++) {
+        currVal = ((double) data[i]) / peak;
+        m_samples << currVal;
+        m_maxPeak = (currVal > m_maxPeak) ? currVal : m_maxPeak;
+    }
 
     m_buffer = buffer;
 }
 
 void Audio::finished()
 {
-    emit dataFinished();
+    m_isFinished = true;
 
     m_channelCount = m_buffer.format().channelCount();
 
-    m_isFinished = true;
+    emit dataFinished();
 }
 
 qreal Audio::peakValue(const QAudioFormat& format) const

@@ -15,10 +15,6 @@ public:
 
     void paintEvent(QPaintEvent* event);
 
-//public slots:
-
-    //void update();
-
 private:
     Audio m_audio;
 };
