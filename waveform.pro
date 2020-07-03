@@ -2,9 +2,9 @@ TARGET = waveform
 
 QT += widgets multimedia
 
-SOURCES += main.cpp \
-    waveform.cpp \
-    audio.cpp
+SOURCES += src/main.cpp \
+    src/waveform.cpp \
+    src/audio.cpp
 
-HEADERS += waveform.h \
-    audio.h
+HEADERS += src/waveform.h \
+    src/audio.h
